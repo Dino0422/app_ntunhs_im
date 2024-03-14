@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewParent
 import android.widget.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,10 +20,36 @@ class MainActivity : AppCompatActivity() {
         val chkbox2 = findViewById<CheckBox>(R.id.ckb2)
         val chkbox3 = findViewById<CheckBox>(R.id.ckb3)
 
+        val btn_send = findViewById<Button>(R.id.btn_send)
+
+        val applyDate = findViewById<EditText>(R.id.editTextDate2)
+
         radGrp_Gender.setOnCheckedChangeListener(){
                 _,checkedID ->
             val gender = radGrp_Gender.findViewById<RadioButton>(checkedID).text.toString()
             Toast.makeText(this,gender,Toast.LENGTH_LONG).show()
         }
+
+        btn_send.setOnClickListener{
+            var msg=""
+            if (chkbox1.isChecked()){
+                msg = msg + chkbox1.getText().toString()
+            }
+            if (chkbox2.isChecked()){
+                msg = msg + "、"+ chkbox2.getText().toString()
+            }
+            if (chkbox3.isChecked()){
+                msg = msg + "、"+ chkbox3.getText().toString()
+            }
+            Toast.makeText(this@MainActivity,"你選的是" + msg,Toast .LENGTH_SHORT).show()
+        }
+
+        applyDate.setOnClickListener{
+            val calender = Calendar.getInstance()
+            val year = calender.get
+        }
+    }
+    private fun setDateFormat(year: Int, month: Int, day: Int): String{
+        return "$year-${month + 1}-$day"
     }
 }
