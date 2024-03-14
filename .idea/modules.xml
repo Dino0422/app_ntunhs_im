@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/app_ntunhs_im-main.iml" filepath="$PROJECT_DIR$/.idea/app_ntunhs_im-main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/5__ru,6.iml" filepath="$PROJECT_DIR$/.idea/modules/5__ru,6.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/5__ru,6.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/5__ru,6.app.iml" />
     </modules>
   </component>
 </project>
