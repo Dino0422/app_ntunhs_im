@@ -5,73 +5,88 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.example.guess_number.databinding.ActivityMainBinding
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
+    val TAG:String = MainActivity::class.java.simpleName
     private lateinit var handler: Handler
+    private lateinit var binding: ActivityMainBinding
+    private val game = guessbutton()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         handler = Handler(Looper.getMainLooper())
 
-        val textView = findViewById<TextView>(R.id.textView)
-        val result_textView = findViewById<TextView>(R.id.result)
-        val guess_button = findViewById<Button>(R.id.guess)
-        val reset_button = findViewById<Button>(R.id.reset)
-        val editText = findViewById<EditText>(R.id.editText)
-        var valid_num:Int
-        val range_num :IntArray = intArrayOf(1, 100)
+        binding.guess.setOnClickListener{
+            val guessNum = binding.editText.text.toString().toInt()
+            val resultText = game.onclick(guessNum)
+            binding.textView.text = game.getRangeText()
+            binding.result.text = resultText
 
-        var secret : Int = Random.nextInt(range_num[1]) + range_num[0]
-        var guess_number : IntArray = intArrayOf(range_num[0], range_num[1])
-
-        guess_button.setOnClickListener{
-            textView.text = editText.text
-            valid_num = editText.text.toString().toInt()
-            var ans_str = this.getString(R.string.yes_you_got_the_answer)
-
-            if (valid_num > secret) {
-                if(guess_number[1] > valid_num) {
-                    guess_number[1] = valid_num
-                }
-            } else if (valid_num < secret) {
-                if(guess_number[0] < valid_num){
-                    guess_number[0] = valid_num
-                }
-            }
-
-            if (valid_num != secret) {
-                ans_str = guess_number[0].toString() + "~" + guess_number[1].toString()
-                textView.text = ans_str
-            }else{
-                textView.text = ans_str
+            if (resultText == "你猜對了！") {
                 handler.postDelayed({
-                    Toast.makeText(this,"6秒後的操作執行！",Toast.LENGTH_SHORT).show()
-                    editText.setText("0")
-                    secret = Random.nextInt(range_num[1]) + range_num[0]
-                    guess_number  = intArrayOf(range_num[0], range_num[1])
-                    textView.text = this.getString(R.string.try_again)
-                },5000)
+                    Toast.makeText(this,"六秒後重製",Toast.LENGTH_SHORT).show()
+                    game.resetGame()
+                    binding.result.text = "再來一次"
+                    binding.textView.text = "下一回合"
+                },6000)
             }
-            textView.text = ans_str
-            //Toast.makeText(this, secret.toString(), Toast.LENGTH_SHORT).show()
-            Log.e("MainActivity", "error")
+
         }
 
-        reset_button.setOnClickListener{
-            editText.setText("0")
-            //secret = Random.nextInt(range_num[1]) + range_num[0]
-            secret = 1
-            guess_number  = intArrayOf(range_num[0], range_num[1])
-            textView.text = this.getString(R.string.try_again)
+        binding.reset.setOnClickListener{
+            game.resetGame()
+            binding.result.text = "再猜一次"
         }
     }
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
     }
+}
+
+class guessbutton {
+    private var valid_num:Int = 0
+    private val range_num :IntArray = intArrayOf(1, 100)
+
+    private var secret : Int = Random.nextInt(range_num[1]) + range_num[0]
+    private var guess_number : IntArray = intArrayOf(range_num[0], range_num[1])
+
+    var maxNum = 100
+    var minNum = 0
+
+    fun onclick(guess: Int): String {
+        if (guess > secret) {
+            if(guess_number[1] > guess) {
+                guess_number[1] = guess
+            }
+            return "你猜得比較大"
+        }
+        else if (guess < secret) {
+            if(guess_number[0] < guess){
+                guess_number[0] = guess
+            }
+            return "你猜得比較小"
+        }
+        else {
+            resetGame()
+            return "你猜對了！"
+        }
+    }
+
+    fun getRangeText(): String = "${guess_number[0]} ~ ${guess_number[1]}"
+
+    fun resetGame(): String {
+        secret = 1
+        guess_number  = intArrayOf(range_num[0], range_num[1])
+        return "重來一次"
+    }
+
 }
